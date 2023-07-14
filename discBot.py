@@ -1,4 +1,5 @@
 import discord
+import requests
 import os 
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -8,10 +9,16 @@ load_dotenv('.env')
 
 BOT_TOKEN = os.getenv('token')
 BOT_CHANNEL = 1126831550294675526
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix = '!', intents = intents)
+
+spotify_client_id = '5476bccffc7a4458a071290a35892eb3'
+spotify_client_secret = '288c9169a7b346c4a3ef4d90fc11f490'
+
+blockedWords = os.getenv('blockedWords').split(", ") #im not listing the blocked words in my code
 
 mygroup = app_commands.Group(name='greetings', description='Welcomes users')
 bot.tree.add_command(mygroup)
@@ -92,6 +99,17 @@ async def on_message(message):
     content = message.content
     await bot.process_commands(message)
     print("{}: {}".format(author, content))
+
+    if message.author != bot.user:
+        for text in blockedWords:
+            if 'Moderator' not in str(message.author.roles) and text.lower() in str(message.content.lower()):
+                await message.delete()
+                await message.channel.send("Be more civilised, {}".format(author.mention))
+                return
+        if message.content.lower() == 'yes':
+            await message.channel.send('no')
+        elif message.content.lower() == 'no':
+            await message.channel.send('yes')
 
 @bot.event
 async def on_message_delete(message):
