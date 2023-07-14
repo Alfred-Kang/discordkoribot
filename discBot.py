@@ -7,7 +7,6 @@ from discord import app_commands
 load_dotenv('.env')
 
 BOT_TOKEN = os.getenv('token')
-print(BOT_TOKEN)
 BOT_CHANNEL = 1126831550294675526
 intents = discord.Intents.default()
 intents.message_content = True
@@ -38,6 +37,10 @@ async def ping(ctx):
 async def pong(ctx):
     mention = await ctx.send('ping')
     await ctx.message.add_reaction("🏓")
+
+@bot.command()
+async def hello(lol):
+    a = await lol.send()
 
 @bot.command()
 async def delete(ctx, user: discord.User    ):
